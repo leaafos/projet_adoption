@@ -2,6 +2,8 @@ import request from 'supertest';
 import assert from 'assert';
 import { app } from '../src/app';
 
+//help lélé
+
 describe('App functional tests', () => {
   it('GET / should return greeting', async () => {
     const res = await request(app).get('/');
@@ -15,7 +17,7 @@ describe('App functional tests', () => {
       type: 'Cat',
       size: 'Small',
       genre: 'Female',
-      breed: 'Labrador',
+      breed: 'Siamese',
       age: 'Kitten',
       description: 'A cute kitten',
       status: 'Available',
