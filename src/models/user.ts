@@ -64,10 +64,12 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
         deletedAt: {
           type: DataTypes.DATE,
           allowNull: true,
+          defaultValue: null,
         },
         lastLogin: {
           type: DataTypes.DATE,
           allowNull: true,
+          defaultValue: null,
         },
         isActive: {
           type: DataTypes.BOOLEAN,
@@ -75,7 +77,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
           defaultValue: true,
         },
         role: {
-          type: DataTypes.STRING(50),
+          type: DataTypes.ENUM('user', 'admin'),
           allowNull: false,
           defaultValue: 'user',
         },
@@ -116,8 +118,9 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
           allowNull: true,
         },
         preferences: {
-          type: DataTypes.TEXT,
+          type: DataTypes.JSON,
           allowNull: true,
+          defaultValue: null,
         },
       },
       {
@@ -125,6 +128,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
         tableName: 'users',
         modelName: 'User',
         timestamps: true,
+        paranoid: true,
       }
     );
     return User;

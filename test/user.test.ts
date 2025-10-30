@@ -2,6 +2,7 @@ import request from 'supertest';
 import assert from 'assert';
 import { app } from '../src/routes/app';
 
+
 // tests pour la table user
 
 describe('App functional tests', () => {
@@ -11,49 +12,51 @@ describe('App functional tests', () => {
     assert.ok(res.text.includes('Hello, TypeScript + Express!'));
   });
 
-  it('POST /animals should create an animal', async () => {
-    const animalData = {
-      organizationId: 'org123',
-      type: 'Cat',
-      size: 'Small',
-      genre: 'Female',
-      breed: 'Siamese',
-      age: 'Kitten',
-      description: 'A cute kitten',
-      status: 'Available',
-      color: 'Gray',
-      coat: 'Short',
-      name: 'Whiskers',
-      good_with_children: true,
-      good_with_dogs: false,
-      good_with_cats: true,
-      house_trained: true,
-      declawed: false,
-      special_needs: 'None',
+  it('POST /users should create a user', async () => {
+    const userData = {
+      name: 'John',
+      surname: 'Doe',
+      email: `john.doe+${Date.now()}@example.com`, 
+      password: 'securepassword',
+      isActive: true,
+      role: 'user',
+      profilePictureUrl: 'https://example.com/profile.jpg',
+      bio: 'Just a regular user.',
+      dateOfBirth: new Date('1990-01-01T00:00:00.000Z'), 
+      phoneNumber: '123-456-7890',
+      address: '123 Main St, Anytown, USA',
+      city: 'Anytown',
+      state: 'CA',
+      country: 'USA',
+      postalCode: '12345',
+      preferences: { theme: 'dark', notifications: true }, 
     };
 
+
     const res = await request(app)
-      .post('/animals')
-      .send(animalData)
+      .post('/users')
+      .send(userData)
       .set('Accept', 'application/json');
 
     assert.equal(res.status, 201);
-    assert.ok(res.body.created);
-    assert.equal(res.body.created.type, animalData.type);
-    assert.equal(res.body.created.size, animalData.size);
-    assert.equal(res.body.created.genre, animalData.genre);
-    assert.equal(res.body.created.breed, animalData.breed);
-    assert.equal(res.body.created.age, animalData.age);
-    assert.equal(res.body.created.description, animalData.description);
-    assert.equal(res.body.created.status, animalData.status);
-    assert.equal(res.body.created.color, animalData.color);
-    assert.equal(res.body.created.coat, animalData.coat);
-    assert.equal(res.body.created.name, animalData.name);
-    assert.equal(res.body.created.good_with_children, animalData.good_with_children);
-    assert.equal(res.body.created.good_with_dogs, animalData.good_with_dogs);
-    assert.equal(res.body.created.good_with_cats, animalData.good_with_cats);
-    assert.equal(res.body.created.house_trained, animalData.house_trained);
-    assert.equal(res.body.created.declawed, animalData.declawed);
-    assert.equal(res.body.created.special_needs, animalData.special_needs);
+    const created = res.body.created ?? res.body;
+
+    assert.ok(created);
+    assert.equal(created.name, userData.name);
+    assert.equal(created.surname, userData.surname);
+    assert.equal(created.email, userData.email);
+    assert.equal(created.isActive, userData.isActive);
+    assert.equal(created.role, userData.role);
+    assert.equal(created.profilePictureUrl, userData.profilePictureUrl);
+    assert.equal(created.bio, userData.bio);
+    assert.equal(created.phoneNumber, userData.phoneNumber);
+    assert.equal(created.address, userData.address);
+    assert.equal(created.city, userData.city);
+    assert.equal(created.state, userData.state);
+    assert.equal(created.country, userData.country);
+    assert.equal(created.postalCode, userData.postalCode);
+    assert.equal(new Date(created.dateOfBirth).toISOString(), userData.dateOfBirth.toISOString());
+    assert.deepStrictEqual(created.preferences, userData.preferences);
+    assert.equal(created.password, userData.password);
   });
 });
