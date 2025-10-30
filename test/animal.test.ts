@@ -2,7 +2,7 @@ import request from 'supertest';
 import assert from 'assert';
 import { app } from '../src/app';
 
-
+// tests pour la table Animal
 
 describe('App functional tests', () => {
   it('GET / should return greeting', async () => {

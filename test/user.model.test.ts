@@ -2,6 +2,7 @@ import assert from 'assert';
 import models from '../src/models';
 
 // Use the default DB (in-memory under NODE_ENV=test)
+// test table User
 
 describe('User model (sqlite::memory:)', () => {
   beforeEach(async () => {

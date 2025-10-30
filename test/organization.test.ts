@@ -2,6 +2,8 @@ import request from 'supertest';
 import assert from 'assert';
 import { app } from '../src/app';
 
+// tests pour la table Organization
+
 describe('App functional tests', () => {
   it('GET / should return greeting', async () => {
     const res = await request(app).get('/');
@@ -57,6 +59,5 @@ describe('App functional tests', () => {
     assert.equal(res.body.created.youtube, organizationData.youtube);
     assert.equal(res.body.created.instagram, organizationData.instagram);
     assert.equal(res.body.created.photos_url, organizationData.photos_url);
-  
   });
 });
