@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { Sequelize } from 'sequelize';
 import { User } from './user';
-import { Artist } from './artist';
 import { Animal } from './animal';
 import { Organization } from './organization';
 
@@ -10,7 +9,6 @@ export interface Database {
   sequelize: Sequelize;
   models: {
     User: typeof User;
-    Artist: typeof Artist;
     Animal: typeof Animal;
     Organization: typeof Organization;
   };
@@ -40,17 +38,16 @@ export function createDatabase(opts: DbOptions = {}): Database {
 
   // Init models
   User.initModel(sequelize);
-  Artist.initModel(sequelize);
   Animal.initModel(sequelize);
   Organization.initModel(sequelize);
 
   return {
     sequelize,
-    models: { User, Artist, Animal, Organization },
+    models: { User, Animal, Organization },
   };
 }
 
-export type { User, Artist, Animal, Organization };
+export type { User, Animal, Organization };
 
 // Default database instance
 // - Uses in-memory SQLite under test to keep tests isolated and fast
