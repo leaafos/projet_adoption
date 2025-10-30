@@ -17,17 +17,20 @@
   "license": "ISC",
   "devDependencies": {
     "@types/chai": "^5.2.2",
+    "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.3",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.6.0",
     "@types/sinon": "^17.0.4",
+    "@types/stripe": "^8.0.416",
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
     "chai": "^6.2.0",
     "eslint": "^9.38.0",
-    "mocha": "^11.7.3",
+    "mocha": "^11.7.4",
     "nock": "^14.0.10",
+    "nodemon": "^3.1.10",
     "sinon": "^21.0.0",
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
@@ -36,8 +39,11 @@
   "dependencies": {
     "@sinonjs/referee-sinon": "^12.0.0",
     "axios": "^1.12.2",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "nodemailer": "^7.0.10",
     "sequelize": "^6.37.7",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "stripe": "^19.2.0"
   }
 }

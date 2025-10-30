@@ -28,7 +28,7 @@ export class Animal extends Model<InferAttributes<Animal>, InferCreationAttribut
         type: { type: DataTypes.STRING(50), allowNull: false },
         size: { type: DataTypes.STRING(50), allowNull: false },
         genre: { type: DataTypes.STRING(50), allowNull: false },
-        breed: { type: DataTypes.STRING(100), allowNull: false },
+        breed: { type: DataTypes.STRING(100), allowNull: true },
         age: { type: DataTypes.STRING(50), allowNull: false },
         description: { type: DataTypes.STRING(255), allowNull: false },
         status: { type: DataTypes.STRING(50), allowNull: false },
