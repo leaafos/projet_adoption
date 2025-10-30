@@ -4,6 +4,7 @@ import { User } from './user';
 import { Animal } from './animal';
 import { Organization } from './organization';
 import { Payment } from './payment';
+import { Mail } from './mail';
 
 
 export interface Database {
@@ -13,6 +14,7 @@ export interface Database {
     Animal: typeof Animal;
     Organization: typeof Organization;
     Payment: typeof Payment;
+    Mail: typeof Mail;
   };
 }
 
@@ -43,14 +45,15 @@ export function createDatabase(opts: DbOptions = {}): Database {
   Animal.initModel(sequelize);
   Organization.initModel(sequelize);
   Payment.initModel(sequelize);
+  Mail.initModel(sequelize);
 
   return {
     sequelize,
-    models: { User, Animal, Organization, Payment },
+    models: { User, Animal, Organization, Payment, Mail },
   };
 }
 
-export type { User, Animal, Organization, Payment };
+export type { User, Animal, Organization, Payment, Mail };
 
 // Default database instance
 // - Uses in-memory SQLite under test to keep tests isolated and fast
