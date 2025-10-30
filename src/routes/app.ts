@@ -1,7 +1,7 @@
 
 
 import express, { Application, Request, Response } from 'express';
-import models from './models';
+import models from '../models';
 
 export const app: Application = express();
 const PORT: number = 3005;
@@ -25,6 +25,12 @@ app.get('/', (_: Request, res: Response) => {
 app.post('/animals', async (req: Request, res: Response) => {
   console.info('Received animal creation request:', req.body);
   const created = await models.Animal.create(req.body);
+  res.status(201).json({ created });
+});
+
+app.post('/organizations', async (req: Request, res: Response) => {
+  console.info('Received organization creation request:', req.body);
+  const created = await models.Organization.create(req.body);
   res.status(201).json({ created });
 });
 

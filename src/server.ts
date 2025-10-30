@@ -1,4 +1,4 @@
-import { app } from './app';
+import { app } from './routes/app';
 
 // This file is responsible only for starting the HTTP server.
 // App initialization (DB etc.) is done in app.ts

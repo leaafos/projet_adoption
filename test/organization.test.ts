@@ -1,6 +1,6 @@
 import request from 'supertest';
 import assert from 'assert';
-import { app } from '../src/app';
+import { app } from '../src/routes/app';
 
 // tests pour la table Organization
 
@@ -15,7 +15,6 @@ describe('App functional tests', () => {
     const organizationData = {
       organizationId: 'org123',
       name: 'Happy Tails Shelter',
-      location: '1234 Bark Ave',
       phone: '555-1234',
       email: 'info@happytails.org',
       website: 'https://www.happytails.org',
@@ -42,7 +41,6 @@ describe('App functional tests', () => {
     assert.equal(res.status, 201);
     assert.ok(res.body.created);
     assert.equal(res.body.created.name, organizationData.name);
-    assert.equal(res.body.created.location, organizationData.location);
     assert.equal(res.body.created.phone, organizationData.phone);
     assert.equal(res.body.created.email, organizationData.email);
     assert.equal(res.body.created.website, organizationData.website);

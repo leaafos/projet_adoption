@@ -1,6 +1,6 @@
 import request from 'supertest';
 import assert from 'assert';
-import { app } from '../src/app';
+import { app } from '../src/routes/app';
 
 // tests pour la table Animal
 
