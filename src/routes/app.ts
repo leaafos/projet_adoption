@@ -34,6 +34,12 @@ app.post('/organizations', async (req: Request, res: Response) => {
   res.status(201).json({ created });
 });
 
+app.post('/users', async (req: Request, res: Response) => {
+  console.info('Received user creation request:', req.body);
+  const created = await models.User.create(req.body);
+  res.status(201).json({ created });
+});
+
 // Only start server when not under test
 if (!inTest) {
   app.listen(PORT, () => {
