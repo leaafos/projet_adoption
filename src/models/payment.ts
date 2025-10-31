@@ -8,7 +8,7 @@ export class Payment extends Model<InferAttributes<Payment>, InferCreationAttrib
   declare currency: string;
   declare status: string;
   declare payment_method: string;
-  declare stripeId: CreationOptional<string>; // ← ajouter cette ligne
+  declare stripeId: CreationOptional<string>; 
 
   static initModel(sequelize: Sequelize): typeof Payment {
     Payment.init(
@@ -20,7 +20,7 @@ export class Payment extends Model<InferAttributes<Payment>, InferCreationAttrib
         currency: { type: DataTypes.STRING(10), allowNull: false },
         status: { type: DataTypes.STRING(50), allowNull: false },
         payment_method: { type: DataTypes.STRING(100), allowNull: false },
-        stripeId: { type: DataTypes.STRING(255), allowNull: true }, // ← ajouter ici
+        stripeId: { type: DataTypes.STRING(255), allowNull: true }, 
       },
       { sequelize, tableName: 'payments', modelName: 'Payment', timestamps: true }
     );

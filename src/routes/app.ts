@@ -24,11 +24,22 @@ app.use(express.json());
 // Initialize SQLite + Sequelize and sync models
 const inTest = process.env.NODE_ENV === 'test';
 const { sequelize } = models;
-sequelize.sync({ alter: true }).then(() => {
-  console.log('Database synchronized');
-}).catch((err) => {
-  console.error('Database sync error:', err);
-});
+
+// Fonction pour synchroniser la base de données
+export const syncDatabase = async () => {
+  try {
+    await sequelize.sync({ alter: true });
+    console.log('Database synchronized');
+  } catch (err) {
+    console.error('Database sync error:', err);
+    throw err;
+  }
+};
+
+// Synchroniser immédiatement en mode non-test
+if (!inTest) {
+  syncDatabase();
+}
 
 app.get('/', (_: Request, res: Response) => {
   res.send('Hello, TypeScript + Express!');
@@ -42,8 +53,13 @@ app.post('/animals', async (req: Request, res: Response) => {
 
 app.post('/organizations', async (req: Request, res: Response) => {
   console.info('Received organization creation request:', req.body);
-  const created = await models.Organization.create(req.body);
-  res.status(201).json({ created });
+  try {
+    const created = await models.Organization.create(req.body);
+    res.status(201).json({ created });
+  } catch (error) {
+    console.error('Error creating organization:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.use(mailRouter);

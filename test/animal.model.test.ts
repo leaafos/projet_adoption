@@ -2,6 +2,7 @@ import assert from 'assert';
 import models from '../src/models';
 
 // Use the default DB (in-memory under NODE_ENV=test)
+// tests globaux, on peut mettre les tests de toutes les tables ici
 
 describe('Animal model (sqlite::memory:)', () => {
   beforeEach(async () => {
