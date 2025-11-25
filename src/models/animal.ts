@@ -2,7 +2,7 @@ import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, 
 
 export class Animal extends Model<InferAttributes<Animal>, InferCreationAttributes<Animal>> {
   declare id: CreationOptional<number>;
-  declare organizationId: string;
+  declare organizationId: number;
   declare type: string;
   declare size: string;
   declare genre: string;
@@ -24,7 +24,7 @@ export class Animal extends Model<InferAttributes<Animal>, InferCreationAttribut
     Animal.init(
       {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        organizationId: { type: DataTypes.STRING(120), allowNull: false },
+        organizationId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'organizations', key: 'organization_id' } },
         type: { type: DataTypes.STRING(50), allowNull: false },
         size: { type: DataTypes.STRING(50), allowNull: false },
         genre: { type: DataTypes.STRING(50), allowNull: false },

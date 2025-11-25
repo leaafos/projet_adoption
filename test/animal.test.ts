@@ -1,10 +1,44 @@
 import request from 'supertest';
 import assert from 'assert';
-import { app } from '../src/routes/app';
+import { app, syncDatabase } from '../src/routes/app';
 
 // tests pour la table Animal
 
+// Helper function to create an organization
+async function createTestOrganization(name: string = 'Test Organization') {
+  const organizationData = {
+    name: name,
+    email: `${name.toLowerCase().replace(/\s+/g, '')}@test.com`,
+    phone: '555-0000',
+    address: '123 Test St',
+    city: 'Test City',
+    state: 'TC',
+    postcode: '00000',
+    country: 'USA',
+    hours: 'Daily 8AM-6PM',
+    url: 'https://test.org',
+    website: 'https://test.org',
+    facebook: 'testorg',
+    pinterest: 'testorg',
+    x: 'testorg',
+    youtube: 'testorg',
+    instagram: 'testorg',
+    photos_url: 'https://test.org/photos'
+  };
+
+  const res = await request(app)
+    .post('/organizations')
+    .send(organizationData)
+    .set('Accept', 'application/json');
+
+  return res.body.created.organization_id;
+}
+
 describe('App functional tests', () => {
+  // Synchroniser la base de données avant tous les tests
+  before(async () => {
+    await syncDatabase();
+  });
   it('GET / should return greeting', async () => {
     const res = await request(app).get('/');
     assert.equal(res.status, 200);
@@ -12,8 +46,11 @@ describe('App functional tests', () => {
   });
 
   it('POST /animals should create an animal', async () => {
+    // Créer une organisation d'abord
+    const organizationId = await createTestOrganization('Animal Shelter');
+
     const animalData = {
-      organizationId: 'org123',
+      organizationId: organizationId,
       type: 'Cat',
       size: 'Small',
       genre: 'Female',
@@ -58,9 +95,11 @@ describe('App functional tests', () => {
   });
 
   it('GET /animals should return all animals', async () => {
+    // Créer une organisation d'abord
+    const organizationId = await createTestOrganization('Pet Shelter');
   
     const animalData = {
-      organizationId: 'org456',
+      organizationId: organizationId,
       type: 'Dog',
       size: 'Large',
       genre: 'Male',
@@ -95,8 +134,11 @@ describe('App functional tests', () => {
   });
 
   it('GET /animals/:id should return a specific animal', async () => {
+    // Créer une organisation d'abord
+    const organizationId = await createTestOrganization('Rabbit Shelter');
+
     const animalData = {
-      organizationId: 'org789',
+      organizationId: organizationId,
       type: 'Rabbit',
       size: 'Small',
       genre: 'Female',
@@ -146,9 +188,11 @@ describe('App functional tests', () => {
   });
 
   it('PUT /animals/:id should update an animal', async () => {
+    // Créer une organisation d'abord
+    const organizationId = await createTestOrganization('Cat Rescue Center');
   
     const animalData = {
-      organizationId: 'org101',
+      organizationId: organizationId,
       type: 'Cat',
       size: 'Medium',
       genre: 'Male',
@@ -208,8 +252,11 @@ describe('App functional tests', () => {
   });
 
   it('DELETE /animals/:id should delete an animal', async () => {
+    // Créer une organisation d'abord
+    const organizationId = await createTestOrganization('Bird Sanctuary');
+
     const animalData = {
-      organizationId: 'org202',
+      organizationId: organizationId,
       type: 'Bird',
       size: 'Small',
       genre: 'Female',
@@ -261,8 +308,11 @@ describe('App functional tests', () => {
   });
 
   it('POST /animals should handle missing required fields gracefully', async () => {
+    // Créer une organisation d'abord pour le test
+    const organizationId = await createTestOrganization('Incomplete Test Org');
+
     const incompleteData = {
-      organizationId: 'org303',
+      organizationId: organizationId,
       type: 'Cat'
     };
 
@@ -272,5 +322,149 @@ describe('App functional tests', () => {
       .set('Accept', 'application/json');
 
     assert.ok(res.status >= 400);
+  });
+
+  it('GET /animals should return animals with their organizations', async () => {
+    // D'abord créer une organisation
+    const organizationData = {
+      name: 'Test Animal Organization',
+      email: 'test@animalorg.com',
+      phone: '555-0123',
+      address: '123 Animal St',
+      city: 'Pet City',
+      state: 'PC',
+      postcode: '12345',
+      country: 'USA',
+      hours: 'Daily 8AM-6PM',
+      url: 'https://testanimalorg.com',
+      website: 'https://testanimalorg.com',
+      facebook: 'testanimalorg',
+      pinterest: 'testanimalorg',
+      x: 'testanimalorg',
+      youtube: 'testanimalorg',
+      instagram: 'testanimalorg',
+      photos_url: 'https://testanimalorg.com/photos'
+    };
+
+    const orgRes = await request(app)
+      .post('/organizations')
+      .send(organizationData)
+      .set('Accept', 'application/json');
+
+    const organizationId = orgRes.body.created.organization_id;
+
+    // Ensuite créer un animal avec cette organisation
+    const animalData = {
+      organizationId: organizationId,
+      type: 'Dog',
+      size: 'Medium',
+      genre: 'Male',
+      breed: 'Labrador',
+      age: 'Adult',
+      description: 'Friendly family dog',
+      status: 'Available',
+      color: 'Golden',
+      coat: 'Short',
+      name: 'BuddyTestAnimalOrg', // Nom unique pour ce test
+      good_with_children: true,
+      good_with_dogs: true,
+      good_with_cats: true,
+      house_trained: true,
+      declawed: false,
+      special_needs: 'None'
+    };
+
+    await request(app)
+      .post('/animals')
+      .send(animalData)
+      .set('Accept', 'application/json');
+
+    // Récupérer tous les animaux et vérifier qu'ils incluent les organisations
+    const res = await request(app)
+      .get('/animals')
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 200);
+    assert.ok(res.body.animals);
+    assert.ok(Array.isArray(res.body.animals));
+    
+    // Trouver notre animal créé
+    const animal = res.body.animals.find((a: any) => a.name === animalData.name);
+    assert.ok(animal, 'Animal should be found');
+    assert.ok(animal.organization, 'Animal should have organization data');
+    assert.equal(animal.organization.name, 'Test Animal Organization');
+    assert.equal(animal.organization.email, organizationData.email);
+    assert.equal(animal.organizationId, organizationId);
+  });
+
+  it('GET /animals/:id should return animal with organization details', async () => {
+    // Créer une organisation
+    const organizationData = {
+      name: 'Specific Test Organization',
+      email: 'specific@testorg.com',
+      phone: '555-9876',
+      address: '456 Specific St',
+      city: 'Specific City',
+      state: 'SC',
+      postcode: '54321',
+      country: 'USA',
+      hours: 'Mon-Fri 9AM-5PM',
+      url: 'https://specifictest.com',
+      website: 'https://specifictest.com',
+      facebook: 'specifictest',
+      pinterest: 'specifictest',
+      x: 'specifictest',
+      youtube: 'specifictest',
+      instagram: 'specifictest',
+      photos_url: 'https://specifictest.com/photos'
+    };
+
+    const orgRes = await request(app)
+      .post('/organizations')
+      .send(organizationData)
+      .set('Accept', 'application/json');
+
+    const organizationId = orgRes.body.created.organization_id;
+
+    // Créer un animal
+    const animalData = {
+      organizationId: organizationId,
+      type: 'Cat',
+      size: 'Small',
+      genre: 'Female',
+      breed: 'Siamese',
+      age: 'Young',
+      description: 'Beautiful Siamese cat',
+      status: 'Available',
+      color: 'Cream',
+      coat: 'Short',
+      name: 'Luna',
+      good_with_children: true,
+      good_with_dogs: false,
+      good_with_cats: true,
+      house_trained: true,
+      declawed: false,
+      special_needs: 'Indoor only'
+    };
+
+    const animalRes = await request(app)
+      .post('/animals')
+      .send(animalData)
+      .set('Accept', 'application/json');
+
+    const animalId = animalRes.body.created.id;
+
+    // Récupérer l'animal spécifique avec ses détails d'organisation
+    const res = await request(app)
+      .get(`/animals/${animalId}`)
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 200);
+    assert.ok(res.body.animal);
+    assert.ok(res.body.animal.organization, 'Animal should include organization details');
+    assert.equal(res.body.animal.organization.name, organizationData.name);
+    assert.equal(res.body.animal.organization.email, organizationData.email);
+    assert.equal(res.body.animal.organization.phone, organizationData.phone);
+    assert.equal(res.body.animal.organizationId, organizationId);
   });
 });

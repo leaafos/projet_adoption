@@ -11,8 +11,29 @@ describe('Animal model (sqlite::memory:)', () => {
 
   it('creates and fetches a Animal', async () => {
     // DB is synced in beforeEach
+    // D'abord créer une organisation
+    const organization = await models.Organization.create({
+      name: 'Test Organization',
+      email: 'test@org.com',
+      phone: '555-0000',
+      address: '123 Test St',
+      city: 'Test City',
+      state: 'TC',
+      postcode: '00000',
+      country: 'USA',
+      hours: 'Daily 8AM-6PM',
+      url: 'https://test.org',
+      website: 'https://test.org',
+      facebook: 'testorg',
+      pinterest: 'testorg',
+      x: 'testorg',
+      youtube: 'testorg',
+      instagram: 'testorg',
+      photos_url: 'https://test.org/photos'
+    });
+
     const created = await models.Animal.create({
-      organizationId: '',
+      organizationId: organization.organization_id,
       type: 'Dog',
       size: 'Medium',
       genre: 'Male',

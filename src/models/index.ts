@@ -47,6 +47,21 @@ export function createDatabase(opts: DbOptions = {}): Database {
   Payment.initModel(sequelize);
   Mail.initModel(sequelize);
 
+  // Define associations
+  // Un animal appartient à une organisation
+  Animal.belongsTo(Organization, {
+    foreignKey: 'organizationId',
+    targetKey: 'organization_id',
+    as: 'organization'
+  });
+
+  // Une organisation peut avoir plusieurs animaux
+  Organization.hasMany(Animal, {
+    foreignKey: 'organizationId',
+    sourceKey: 'organization_id',
+    as: 'animals'
+  });
+
   return {
     sequelize,
     models: { User, Animal, Organization, Payment, Mail },

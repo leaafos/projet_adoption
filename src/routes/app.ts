@@ -54,7 +54,12 @@ app.post('/animals', async (req: Request, res: Response) => {
 // GET /animals - Récupérer tous les animaux
 app.get('/animals', async (_req: Request, res: Response) => {
   try {
-    const animals = await models.Animal.findAll();
+    const animals = await models.Animal.findAll({
+      include: [{
+        model: models.Organization,
+        as: 'organization'
+      }]
+    });
     res.status(200).json({ animals });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -64,7 +69,12 @@ app.get('/animals', async (_req: Request, res: Response) => {
 // GET /animals/:id - Récupérer un animal spécifique
 app.get('/animals/:id', async (req: Request, res: Response) => {
   try {
-    const animal = await models.Animal.findByPk(req.params.id);
+    const animal = await models.Animal.findByPk(req.params.id, {
+      include: [{
+        model: models.Organization,
+        as: 'organization'
+      }]
+    });
     if (!animal) {
       return res.status(404).json({ error: "Animal not found" });
     }
@@ -107,8 +117,59 @@ app.post('/organizations', async (req: Request, res: Response) => {
   try {
     const created = await models.Organization.create(req.body);
     res.status(201).json({ created });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating organization:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /organizations - Récupérer toutes les organisations
+app.get('/organizations', async (_req: Request, res: Response) => {
+  try {
+    const organizations = await models.Organization.findAll();
+    res.status(200).json({ organizations });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /organizations/:id - Récupérer une organisation spécifique
+app.get('/organizations/:id', async (req: Request, res: Response) => {
+  try {
+    const organization = await models.Organization.findByPk(req.params.id);
+    if (!organization) {
+      return res.status(404).json({ error: "Organization not found" });
+    }
+    res.status(200).json({ organization });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT /organizations/:id - Mettre à jour une organisation
+app.put('/organizations/:id', async (req: Request, res: Response) => {
+  try {
+    const organization = await models.Organization.findByPk(req.params.id);
+    if (!organization) {
+      return res.status(404).json({ error: "Organization not found" });
+    }
+    const updated = await organization.update(req.body);
+    res.status(200).json({ updated });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE /organizations/:id - Supprimer une organisation
+app.delete('/organizations/:id', async (req: Request, res: Response) => {
+  try {
+    const organization = await models.Organization.findByPk(req.params.id);
+    if (!organization) {
+      return res.status(404).json({ error: "Organization not found" });
+    }
+    await organization.destroy();
+    res.status(200).json({ message: "Organization deleted successfully" });
+  } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 });
