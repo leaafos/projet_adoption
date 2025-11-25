@@ -4,6 +4,7 @@ dotenv.config();
 import models from '../models';
 import { mailRouter } from './mailRoutes';
 import { paymentRouter } from "./paymentRoutes";
+import petsRouter from './pets';
 
 
 console.log("STRIPE_SECRET_KEY =", process.env.STRIPE_SECRET_KEY); 
@@ -18,6 +19,7 @@ const PORT: number = 3005;
 
 // Parse JSON bodies
 app.use(express.json());
+
 
 // Initialize SQLite + Sequelize and sync models
 const inTest = process.env.NODE_ENV === 'test';
@@ -176,6 +178,7 @@ app.delete('/organizations/:id', async (req: Request, res: Response) => {
 
 app.use(mailRouter);
 app.use(paymentRouter);
+app.use(petsRouter);
 
 app.post('/users', async (req: Request, res: Response) => {
   console.info('Received user creation request:', req.body);
