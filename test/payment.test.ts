@@ -11,7 +11,6 @@ describe('App functional tests', () => {
   
   before(async function() {
     this.timeout(originalTimeout);
-    // Synchroniser la base de données avant de commencer les tests
     await syncDatabase();
   });
 
@@ -25,7 +24,6 @@ describe('App functional tests', () => {
   it('POST /payments should create a payment', async function() {
     this.timeout(10000);
     
-    // D'abord créer un utilisateur pour le test
     const userData = {
       name: 'John',
       surname: 'Doe',
@@ -40,7 +38,6 @@ describe('App functional tests', () => {
       .send(userData)
       .set('Accept', 'application/json');
 
-    // Ensuite créer une organisation pour le test
     const orgData = {
       name: 'Test Payment Org',
       phone: '555-1234',
@@ -67,7 +64,7 @@ describe('App functional tests', () => {
       .set('Accept', 'application/json');
 
     const paymentData = {
-      organizationId: orgRes.body.created.organization_id.toString(), // Utiliser l'ID de l'organisation créée
+      organizationId: orgRes.body.created.organization_id.toString(), 
       userId: userRes.body.created.id.toString(), 
       amount: 100,
       currency: 'usd',
@@ -94,8 +91,7 @@ describe('App functional tests', () => {
 
   it('POST /payments should fail with non-existent user', async function() {
     this.timeout(10000);
-    
-    // Créer une organisation valide pour le test
+  
     const orgData = {
       name: 'Valid Org for User Test',
       phone: '555-0000',
@@ -122,8 +118,8 @@ describe('App functional tests', () => {
       .set('Accept', 'application/json');
     
     const paymentData = {
-      organizationId: orgRes.body.created.organization_id.toString(), // Utiliser une organisation valide
-      userId: '99999', // Mais un utilisateur inexistant
+      organizationId: orgRes.body.created.organization_id.toString(), 
+      userId: '99999', 
       amount: 100,
       currency: 'usd',
       status: 'PENDING',
@@ -181,7 +177,6 @@ describe('App functional tests', () => {
   it('GET /payments should return all payments', async function() {
     this.timeout(10000);
     
-    // Créer un utilisateur pour le test
     const userData = {
       name: 'Test',
       surname: 'User',
@@ -196,7 +191,6 @@ describe('App functional tests', () => {
       .send(userData)
       .set('Accept', 'application/json');
 
-    // Créer une organisation pour le test
     const orgData = {
       name: 'Test Get Org',
       phone: '555-5678',
@@ -250,7 +244,6 @@ describe('App functional tests', () => {
   it('GET /payments/:id should return a specific payment', async function() {
     this.timeout(10000);
     
-    // Créer un utilisateur pour le test
     const userData = {
       name: 'Specific',
       surname: 'User',
@@ -265,7 +258,6 @@ describe('App functional tests', () => {
       .send(userData)
       .set('Accept', 'application/json');
 
-    // Créer une organisation pour le test
     const orgData = {
       name: 'Specific Test Org',
       phone: '555-9999',

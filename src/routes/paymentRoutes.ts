@@ -4,7 +4,6 @@ import { Payment } from "../models/payment";
 
 export const paymentRouter = Router();
 
-// GET /payments - Récupérer tous les paiements
 paymentRouter.get("/payments", async (_req, res) => {
   try {
     const payments = await Payment.findAll();
@@ -14,7 +13,6 @@ paymentRouter.get("/payments", async (_req, res) => {
   }
 });
 
-// GET /payments/:id - Récupérer un paiement par ID
 paymentRouter.get("/payments/:id", async (req, res) => {
   try {
     const payment = await Payment.findByPk(req.params.id);

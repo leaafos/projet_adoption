@@ -18,7 +18,7 @@ interface PaymentData {
 
 export async function createPayment(paymentData: PaymentData) {
   try {
-    // Vérifier que les IDs sont des nombres valides
+   
     const userIdNum = parseInt(paymentData.userId);
     if (isNaN(userIdNum)) {
       throw new Error(`User with ID ${paymentData.userId} not found`);
@@ -39,7 +39,7 @@ export async function createPayment(paymentData: PaymentData) {
       throw new Error(`Organization with ID ${paymentData.organizationId} not found`);
     }
 
-    // En mode test, on évite les appels réels à Stripe
+
     if (process.env.NODE_ENV === 'test') {
       const payment = await Payment.create({
         ...paymentData,

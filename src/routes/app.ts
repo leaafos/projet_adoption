@@ -1,5 +1,3 @@
-
-
 import express, { Application, Request, Response } from 'express';
 import * as dotenv from "dotenv";  
 dotenv.config();
@@ -30,7 +28,9 @@ const { sequelize } = models;
 // Fonction pour synchroniser la base de données
 export const syncDatabase = async () => {
   try {
-    await sequelize.sync({ alter: true });
+    // En mode test, on force la recréation des tables pour éviter les conflits
+    const isTest = process.env.NODE_ENV === 'test';
+    await sequelize.sync({ force: isTest });
     console.log('Database synchronized');
   } catch (err) {
     console.error('Database sync error:', err);
@@ -51,6 +51,57 @@ app.post('/animals', async (req: Request, res: Response) => {
   console.info('Received animal creation request:', req.body);
   const created = await models.Animal.create(req.body);
   res.status(201).json({ created });
+});
+
+// GET /animals - Récupérer tous les animaux
+app.get('/animals', async (_req: Request, res: Response) => {
+  try {
+    const animals = await models.Animal.findAll();
+    res.status(200).json({ animals });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /animals/:id - Récupérer un animal spécifique
+app.get('/animals/:id', async (req: Request, res: Response) => {
+  try {
+    const animal = await models.Animal.findByPk(req.params.id);
+    if (!animal) {
+      return res.status(404).json({ error: "Animal not found" });
+    }
+    res.status(200).json({ animal });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT /animals/:id - Mettre à jour un animal
+app.put('/animals/:id', async (req: Request, res: Response) => {
+  try {
+    const animal = await models.Animal.findByPk(req.params.id);
+    if (!animal) {
+      return res.status(404).json({ error: "Animal not found" });
+    }
+    const updated = await animal.update(req.body);
+    res.status(200).json({ updated });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE /animals/:id - Supprimer un animal
+app.delete('/animals/:id', async (req: Request, res: Response) => {
+  try {
+    const animal = await models.Animal.findByPk(req.params.id);
+    if (!animal) {
+      return res.status(404).json({ error: "Animal not found" });
+    }
+    await animal.destroy();
+    res.status(200).json({ message: "Animal deleted successfully" });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.post('/organizations', async (req: Request, res: Response) => {

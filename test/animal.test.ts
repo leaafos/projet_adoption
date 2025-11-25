@@ -56,4 +56,221 @@ describe('App functional tests', () => {
     assert.equal(res.body.created.declawed, animalData.declawed);
     assert.equal(res.body.created.special_needs, animalData.special_needs);
   });
+
+  it('GET /animals should return all animals', async () => {
+  
+    const animalData = {
+      organizationId: 'org456',
+      type: 'Dog',
+      size: 'Large',
+      genre: 'Male',
+      breed: 'Golden Retriever',
+      age: 'Adult',
+      description: 'A friendly dog',
+      status: 'Available',
+      color: 'Golden',
+      coat: 'Long',
+      name: 'Buddy',
+      good_with_children: true,
+      good_with_dogs: true,
+      good_with_cats: false,
+      house_trained: true,
+      declawed: false,
+      special_needs: 'None'
+    };
+
+    await request(app)
+      .post('/animals')
+      .send(animalData)
+      .set('Accept', 'application/json');
+
+    const res = await request(app)
+      .get('/animals')
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 200);
+    assert.ok(res.body.animals);
+    assert.ok(Array.isArray(res.body.animals));
+    assert.ok(res.body.animals.length > 0);
+  });
+
+  it('GET /animals/:id should return a specific animal', async () => {
+    const animalData = {
+      organizationId: 'org789',
+      type: 'Rabbit',
+      size: 'Small',
+      genre: 'Female',
+      breed: 'Holland Lop',
+      age: 'Young',
+      description: 'A cute rabbit',
+      status: 'Available',
+      color: 'White',
+      coat: 'Short',
+      name: 'Snowball',
+      good_with_children: true,
+      good_with_dogs: false,
+      good_with_cats: false,
+      house_trained: true,
+      declawed: false,
+      special_needs: 'Quiet environment'
+    };
+
+    const createRes = await request(app)
+      .post('/animals')
+      .send(animalData)
+      .set('Accept', 'application/json');
+
+    const animalId = createRes.body.created.id;
+
+  
+    const res = await request(app)
+      .get(`/animals/${animalId}`)
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 200);
+    assert.ok(res.body.animal);
+    assert.equal(res.body.animal.id, animalId);
+    assert.equal(res.body.animal.name, animalData.name);
+    assert.equal(res.body.animal.type, animalData.type);
+    assert.equal(res.body.animal.breed, animalData.breed);
+  });
+
+  it('GET /animals/:id should return 404 for non-existent animal', async () => {
+    const res = await request(app)
+      .get('/animals/99999')
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 404);
+    assert.ok(res.body.error);
+    assert.equal(res.body.error, 'Animal not found');
+  });
+
+  it('PUT /animals/:id should update an animal', async () => {
+  
+    const animalData = {
+      organizationId: 'org101',
+      type: 'Cat',
+      size: 'Medium',
+      genre: 'Male',
+      breed: 'Persian',
+      age: 'Senior',
+      description: 'An old cat',
+      status: 'Available',
+      color: 'Black',
+      coat: 'Long',
+      name: 'Shadow',
+      good_with_children: false,
+      good_with_dogs: false,
+      good_with_cats: true,
+      house_trained: true,
+      declawed: false,
+      special_needs: 'Medical needs'
+    };
+
+    const createRes = await request(app)
+      .post('/animals')
+      .send(animalData)
+      .set('Accept', 'application/json');
+
+    const animalId = createRes.body.created.id;
+
+    const updateData = {
+      name: 'Shadow Updated',
+      status: 'Adopted',
+      description: 'An old cat - now adopted!'
+    };
+
+    const res = await request(app)
+      .put(`/animals/${animalId}`)
+      .send(updateData)
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 200);
+    assert.ok(res.body.updated);
+    assert.equal(res.body.updated.name, updateData.name);
+    assert.equal(res.body.updated.status, updateData.status);
+    assert.equal(res.body.updated.description, updateData.description);
+    assert.equal(res.body.updated.type, animalData.type);
+    assert.equal(res.body.updated.breed, animalData.breed);
+  });
+
+  it('PUT /animals/:id should return 404 for non-existent animal', async () => {
+    const updateData = { name: 'Updated Name' };
+
+    const res = await request(app)
+      .put('/animals/99999')
+      .send(updateData)
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 404);
+    assert.ok(res.body.error);
+    assert.equal(res.body.error, 'Animal not found');
+  });
+
+  it('DELETE /animals/:id should delete an animal', async () => {
+    const animalData = {
+      organizationId: 'org202',
+      type: 'Bird',
+      size: 'Small',
+      genre: 'Female',
+      breed: 'Canary',
+      age: 'Young',
+      description: 'A singing bird',
+      status: 'Available',
+      color: 'Yellow',
+      coat: 'Feathers',
+      name: 'Tweety',
+      good_with_children: true,
+      good_with_dogs: false,
+      good_with_cats: false,
+      house_trained: false,
+      declawed: false,
+      special_needs: 'Cage required'
+    };
+
+    const createRes = await request(app)
+      .post('/animals')
+      .send(animalData)
+      .set('Accept', 'application/json');
+
+    const animalId = createRes.body.created.id;
+
+    const res = await request(app)
+      .delete(`/animals/${animalId}`)
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 200);
+    assert.ok(res.body.message);
+    assert.equal(res.body.message, 'Animal deleted successfully');
+
+    const getRes = await request(app)
+      .get(`/animals/${animalId}`)
+      .set('Accept', 'application/json');
+
+    assert.equal(getRes.status, 404);
+  });
+
+  it('DELETE /animals/:id should return 404 for non-existent animal', async () => {
+    const res = await request(app)
+      .delete('/animals/99999')
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 404);
+    assert.ok(res.body.error);
+    assert.equal(res.body.error, 'Animal not found');
+  });
+
+  it('POST /animals should handle missing required fields gracefully', async () => {
+    const incompleteData = {
+      organizationId: 'org303',
+      type: 'Cat'
+    };
+
+    const res = await request(app)
+      .post('/animals')
+      .send(incompleteData)
+      .set('Accept', 'application/json');
+
+    assert.ok(res.status >= 400);
+  });
 });
