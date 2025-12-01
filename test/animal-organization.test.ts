@@ -126,7 +126,7 @@ describe('Animals with Organizations API tests', () => {
       .get(`/animals/${animalId}`)
       .set('Accept', 'application/json');
 
-    console.log('\n🐱 GET /animals/:id response:', JSON.stringify(res.body, null, 2));
+    console.log('\n GET /animals/:id response:', JSON.stringify(res.body, null, 2));
 
     assert.equal(res.status, 200);
     assert.ok(res.body.animal);
@@ -167,7 +167,7 @@ describe('Animals with Organizations API tests', () => {
       .send(animalData)
       .set('Accept', 'application/json');
 
-    console.log('\n🐰 POST /animals response:', JSON.stringify(res.body, null, 2));
+    console.log('\n POST /animals response:', JSON.stringify(res.body, null, 2));
 
     assert.equal(res.status, 201);
     assert.ok(res.body.created);
@@ -201,7 +201,7 @@ describe('Animals with Organizations API tests', () => {
       .send(animalData)
       .set('Accept', 'application/json');
 
-    console.log('\n❌ POST /animals with invalid org response:', JSON.stringify(res.body, null, 2));
+    console.log('\n POST /animals with invalid org response:', JSON.stringify(res.body, null, 2));
 
     assert.ok(res.status >= 400, 'Should fail with invalid organization ID');
   });

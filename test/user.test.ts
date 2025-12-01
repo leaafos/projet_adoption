@@ -42,7 +42,7 @@ describe('User Account Creation - Functional Tests', () => {
       .send(userData)
       .set('Accept', 'application/json');
 
-    console.log('\n✅ Complete account creation response:', JSON.stringify(res.body, null, 2));
+    console.log('\n Complete account creation response:', JSON.stringify(res.body, null, 2));
 
     assert.equal(res.status, 201, 'Should return 201 Created status');
     assert.ok(res.body.created, 'Should return created user object');
@@ -75,7 +75,7 @@ describe('User Account Creation - Functional Tests', () => {
       .send(minimalUserData)
       .set('Accept', 'application/json');
 
-    console.log('\n📝 Minimal account creation response:', JSON.stringify(res.body, null, 2));
+    console.log('\n Minimal account creation response:', JSON.stringify(res.body, null, 2));
 
     assert.equal(res.status, 201, 'Should create user with minimal data');
     assert.ok(res.body.created, 'Should return created user');
@@ -123,7 +123,7 @@ describe('User Account Creation - Functional Tests', () => {
       .send(secondUser)
       .set('Accept', 'application/json');
 
-    console.log('\n❌ Duplicate email response:', JSON.stringify(secondRes.body, null, 2));
+    console.log('\n Duplicate email response:', JSON.stringify(secondRes.body, null, 2));
 
     assert.ok(secondRes.status >= 400, 'Should fail when creating duplicate email');
   });
@@ -140,7 +140,7 @@ describe('User Account Creation - Functional Tests', () => {
       .send(incompleteUserData)
       .set('Accept', 'application/json');
 
-    console.log('\n⚠️ Missing fields response:', JSON.stringify(res.body, null, 2));
+    console.log('\n Missing fields response:', JSON.stringify(res.body, null, 2));
 
     assert.ok(res.status >= 400, 'Should fail when required fields are missing');
   });
@@ -159,7 +159,7 @@ describe('User Account Creation - Functional Tests', () => {
       .send(invalidEmailData)
       .set('Accept', 'application/json');
 
-    console.log('\n📧 Invalid email response:', JSON.stringify(res.body, null, 2));
+    console.log('\n Invalid email response:', JSON.stringify(res.body, null, 2));
 
     assert.ok(res.status >= 400, 'Should fail with invalid email format');
   });
@@ -181,7 +181,7 @@ describe('User Account Creation - Functional Tests', () => {
       .send(frenchUserData)
       .set('Accept', 'application/json');
 
-    console.log('\n🇫🇷 French characters response:', JSON.stringify(res.body, null, 2));
+    console.log('\n French characters response:', JSON.stringify(res.body, null, 2));
 
     assert.equal(res.status, 201, 'Should handle French characters correctly');
     
@@ -222,7 +222,7 @@ describe('User Account Creation - Functional Tests', () => {
       .send(userWithPreferences)
       .set('Accept', 'application/json');
 
-    console.log('\n⚙️ Complex preferences response:', JSON.stringify(res.body, null, 2));
+    console.log('\n Complex preferences response:', JSON.stringify(res.body, null, 2));
 
     assert.equal(res.status, 201, 'Should handle complex preferences');
     

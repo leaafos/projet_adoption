@@ -323,5 +323,194 @@ describe('App functional tests', () => {
     assert.ok(res.body.error);
     assert.equal(res.body.error, 'Payment not found');
   });
+
+  it('POST /payments should fail with invalid card number', async function() {
+    this.timeout(10000);
+    
+    const userData = {
+      name: 'Card',
+      surname: 'Test',
+      email: 'card.test@example.com',
+      password: 'securepassword',
+      isActive: true,
+      role: 'user'
+    };
+
+    const userRes = await request(app)
+      .post('/users')
+      .send(userData)
+      .set('Accept', 'application/json');
+
+    const orgData = {
+      name: 'Card Test Org',
+      phone: '555-1111',
+      email: 'card@testorg.com',
+      website: 'https://www.cardtestorg.com',
+      address: '111 Card St',
+      city: 'Cardville',
+      state: 'CT',
+      postcode: '11111',
+      country: 'USA',
+      hours: 'Mon-Fri 9am-5pm',
+      url: 'https://www.cardtestorg.com',
+      facebook: 'cardtestorg',
+      pinterest: 'cardtestorg',
+      x: 'cardtestorg',
+      youtube: 'cardtestorg',
+      instagram: 'cardtestorg',
+      photos_url: 'https://www.cardtestorg.com/photos'
+    };
+
+    const orgRes = await request(app)
+      .post('/organizations')
+      .send(orgData)
+      .set('Accept', 'application/json');
+
+    const paymentData = {
+      organizationId: orgRes.body.created.organization_id.toString(), 
+      userId: userRes.body.created.id.toString(), 
+      amount: 100,
+      currency: 'eur',
+      status: 'pending',
+      payment_method: 'carte_bancaire',
+      cardNumber: '4000000000000002', // Carte invalide (déclinée)
+      stripeId: 'pi_invalid_card'
+    };
+
+    const res = await request(app)
+      .post('/payments')
+      .send(paymentData)
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 400);
+    assert.ok(res.body.error);
+    assert.ok(res.body.error.includes('Cette carte bancaire a été refusée par la banque'));
+  });
+
+  it('POST /payments should fail with completely invalid card format', async function() {
+    this.timeout(10000);
+    
+    const userData = {
+      name: 'Format',
+      surname: 'Test',
+      email: 'format.test@example.com',
+      password: 'securepassword',
+      isActive: true,
+      role: 'user'
+    };
+
+    const userRes = await request(app)
+      .post('/users')
+      .send(userData)
+      .set('Accept', 'application/json');
+
+    const orgData = {
+      name: 'Format Test Org',
+      phone: '555-2222',
+      email: 'format@testorg.com',
+      website: 'https://www.formattestorg.com',
+      address: '222 Format St',
+      city: 'Formatville',
+      state: 'FT',
+      postcode: '22222',
+      country: 'USA',
+      hours: 'Mon-Fri 9am-5pm',
+      url: 'https://www.formattestorg.com',
+      facebook: 'formattestorg',
+      pinterest: 'formattestorg',
+      x: 'formattestorg',
+      youtube: 'formattestorg',
+      instagram: 'formattestorg',
+      photos_url: 'https://www.formattestorg.com/photos'
+    };
+
+    const orgRes = await request(app)
+      .post('/organizations')
+      .send(orgData)
+      .set('Accept', 'application/json');
+
+    const paymentData = {
+      organizationId: orgRes.body.created.organization_id.toString(), 
+      userId: userRes.body.created.id.toString(), 
+      amount: 50,
+      currency: 'eur',
+      status: 'pending',
+      payment_method: 'carte_bancaire',
+      cardNumber: '1234-5678-abcd', // Format complètement invalide
+      stripeId: 'pi_invalid_format'
+    };
+
+    const res = await request(app)
+      .post('/payments')
+      .send(paymentData)
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 400);
+    assert.ok(res.body.error);
+    assert.ok(res.body.error.includes('Numéro de carte invalide'));
+  });
+
+  it('POST /payments should succeed with valid card number', async function() {
+    this.timeout(10000);
+    
+    const userData = {
+      name: 'Valid',
+      surname: 'Card',
+      email: 'valid.card@example.com',
+      password: 'securepassword',
+      isActive: true,
+      role: 'user'
+    };
+
+    const userRes = await request(app)
+      .post('/users')
+      .send(userData)
+      .set('Accept', 'application/json');
+
+    const orgData = {
+      name: 'Valid Card Org',
+      phone: '555-3333',
+      email: 'valid@testorg.com',
+      website: 'https://www.validcardorg.com',
+      address: '333 Valid St',
+      city: 'Validville',
+      state: 'VC',
+      postcode: '33333',
+      country: 'USA',
+      hours: 'Mon-Fri 9am-5pm',
+      url: 'https://www.validcardorg.com',
+      facebook: 'validcardorg',
+      pinterest: 'validcardorg',
+      x: 'validcardorg',
+      youtube: 'validcardorg',
+      instagram: 'validcardorg',
+      photos_url: 'https://www.validcardorg.com/photos'
+    };
+
+    const orgRes = await request(app)
+      .post('/organizations')
+      .send(orgData)
+      .set('Accept', 'application/json');
+
+    const paymentData = {
+      organizationId: orgRes.body.created.organization_id.toString(), 
+      userId: userRes.body.created.id.toString(), 
+      amount: 75,
+      currency: 'eur',
+      status: 'completed',
+      payment_method: 'carte_bancaire',
+      cardNumber: '4242424242424242', // Carte Visa valide pour tests
+      stripeId: 'pi_valid_card'
+    };
+
+    const res = await request(app)
+      .post('/payments')
+      .send(paymentData)
+      .set('Accept', 'application/json');
+
+    assert.equal(res.status, 201);
+    assert.ok(res.body.created);
+    assert.equal(res.body.created.status, 'completed');
+  });
 });
 

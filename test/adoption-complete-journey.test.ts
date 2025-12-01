@@ -95,7 +95,7 @@ describe('Complete Adoption Journey - End-to-End Functional Tests', () => {
       console.log('\n === PARCOURS COMPLET D\'ADOPTION ===');
       console.log('Histoire: Marie découvre Buddy sur le site et décide de l\'adopter');
 
-      console.log('\n🏗️  PHASE 1: Préparation du système...');
+      console.log('\n  PHASE 1: Préparation du système...');
 
       console.log('\n Étape 1.1: Création du refuge "SPA Les Amis Fidèles"...');
       const refuge = await createOrganization('SPA Les Amis Fidèles');
@@ -206,7 +206,7 @@ describe('Complete Adoption Journey - End-to-End Functional Tests', () => {
 
       console.log('\n PHASE 4: Paiement et finalisation...');
 
-      console.log('\n💰 Étape 4.1: Marie paye les frais d\'adoption (200€)...');
+      console.log('\nÉtape 4.1: Marie paye les frais d\'adoption (200€)...');
       const paymentData = {
         organizationId: refuge.organization_id,
         userId: marie.id,
@@ -257,7 +257,7 @@ describe('Complete Adoption Journey - End-to-End Functional Tests', () => {
       assert.ok(confirmationRes.status === 200 || confirmationRes.status === 500);
       console.log('Confirmation de paiement envoyée');
 
-      console.log('\n🏠 Étape 4.3: Buddy est maintenant adopté !...');
+      console.log('\nÉtape 4.3: Buddy est maintenant adopté !...');
       const adoptionUpdateRes = await request(app)
         .put(`/animals/${buddy.id}`)
         .send({ status: 'Adopted' })
@@ -302,13 +302,13 @@ describe('Complete Adoption Journey - End-to-End Functional Tests', () => {
 
 
       console.log('\n === ADOPTION TERMINÉE AVEC SUCCÈS ! ===');
-      console.log('📋 Récapitulatif du parcours :');
-      console.log(`    Adoptante : Marie Adoptante (${marie.email})`);
-      console.log(`    Animal adopté : ${buddy.name} (${buddy.type})`);
-      console.log(`    Refuge : ${refuge.name}`);
-      console.log(`    Montant payé : 200€`);
-      console.log(`    Emails envoyés : ${marieMails.length}`);
-      console.log(`    Statut final : Adopté`);
+      console.log('Récapitulatif du parcours :');
+      console.log(`Adoptante : Marie Adoptante (${marie.email})`);
+      console.log(`Animal adopté : ${buddy.name} (${buddy.type})`);
+      console.log(`Refuge : ${refuge.name}`);
+      console.log(`Montant payé : 200€`);
+      console.log(`Emails envoyés : ${marieMails.length}`);
+      console.log(`Statut final : Adopté`);
       console.log('Buddy a trouvé sa famille pour la vie !');
 
       assert.equal(updatedBuddy.status, 'Adopted', 'L\'adoption devrait être finalisée');
@@ -349,7 +349,7 @@ describe('Complete Adoption Journey - End-to-End Functional Tests', () => {
         to: donateur.email,
         title: 'Merci pour votre généreux don !',
         body: `
-        <h2>🙏 Merci Pierre !</h2>
+        <h2>Merci Pierre !</h2>
         <p>Votre don de 50€ nous aide énormément à prendre soin de nos protégés.</p>
         <p>Grâce à vous, nous pouvons :</p>
         <ul>
