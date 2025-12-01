@@ -40,14 +40,12 @@ export function createDatabase(opts: DbOptions = {}): Database {
     logging: opts.logging ?? false,
   });
 
-  // Init models
   User.initModel(sequelize);
   Animal.initModel(sequelize);
   Organization.initModel(sequelize);
   Payment.initModel(sequelize);
   Mail.initModel(sequelize);
 
-  // Define associations
   // Un animal appartient à une organisation
   Animal.belongsTo(Organization, {
     foreignKey: 'organizationId',
@@ -70,15 +68,12 @@ export function createDatabase(opts: DbOptions = {}): Database {
 
 export type { User, Animal, Organization, Payment, Mail };
 
-// Default database instance
-// - Uses in-memory SQLite under test to keep tests isolated and fast
-// - Disables logging by default to reduce noise
+
 const _defaultDb = createDatabase({
   inMemory: process.env.NODE_ENV === 'test',
   logging: false,
 });
 
-// Flatten models on the default export to allow `models.sequelize` and `models.User`
 const defaultExport = {
   sequelize: _defaultDb.sequelize,
   ..._defaultDb.models,

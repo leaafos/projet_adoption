@@ -4,7 +4,6 @@ import { app, syncDatabase } from '../src/routes/app';
 
 // tests pour la table Animal
 
-// Helper function to create an organization
 async function createTestOrganization(name: string = 'Test Organization') {
   const organizationData = {
     name: name,
@@ -35,7 +34,6 @@ async function createTestOrganization(name: string = 'Test Organization') {
 }
 
 describe('App functional tests', () => {
-  // Synchroniser la base de données avant tous les tests
   before(async () => {
     await syncDatabase();
   });
@@ -46,7 +44,6 @@ describe('App functional tests', () => {
   });
 
   it('POST /animals should create an animal', async () => {
-    // Créer une organisation d'abord
     const organizationId = await createTestOrganization('Animal Shelter');
 
     const animalData = {
@@ -95,7 +92,6 @@ describe('App functional tests', () => {
   });
 
   it('GET /animals should return all animals', async () => {
-    // Créer une organisation d'abord
     const organizationId = await createTestOrganization('Pet Shelter');
   
     const animalData = {
@@ -134,7 +130,6 @@ describe('App functional tests', () => {
   });
 
   it('GET /animals/:id should return a specific animal', async () => {
-    // Créer une organisation d'abord
     const organizationId = await createTestOrganization('Rabbit Shelter');
 
     const animalData = {
@@ -188,7 +183,6 @@ describe('App functional tests', () => {
   });
 
   it('PUT /animals/:id should update an animal', async () => {
-    // Créer une organisation d'abord
     const organizationId = await createTestOrganization('Cat Rescue Center');
   
     const animalData = {
@@ -252,7 +246,6 @@ describe('App functional tests', () => {
   });
 
   it('DELETE /animals/:id should delete an animal', async () => {
-    // Créer une organisation d'abord
     const organizationId = await createTestOrganization('Bird Sanctuary');
 
     const animalData = {
@@ -308,7 +301,6 @@ describe('App functional tests', () => {
   });
 
   it('POST /animals should handle missing required fields gracefully', async () => {
-    // Créer une organisation d'abord pour le test
     const organizationId = await createTestOrganization('Incomplete Test Org');
 
     const incompleteData = {
@@ -325,7 +317,6 @@ describe('App functional tests', () => {
   });
 
   it('GET /animals should return animals with their organizations', async () => {
-    // D'abord créer une organisation
     const organizationData = {
       name: 'Test Animal Organization',
       email: 'test@animalorg.com',
@@ -353,7 +344,6 @@ describe('App functional tests', () => {
 
     const organizationId = orgRes.body.created.organization_id;
 
-    // Ensuite créer un animal avec cette organisation
     const animalData = {
       organizationId: organizationId,
       type: 'Dog',
@@ -365,7 +355,7 @@ describe('App functional tests', () => {
       status: 'Available',
       color: 'Golden',
       coat: 'Short',
-      name: 'BuddyTestAnimalOrg', // Nom unique pour ce test
+      name: 'BuddyTestAnimalOrg', 
       good_with_children: true,
       good_with_dogs: true,
       good_with_cats: true,
@@ -379,7 +369,6 @@ describe('App functional tests', () => {
       .send(animalData)
       .set('Accept', 'application/json');
 
-    // Récupérer tous les animaux et vérifier qu'ils incluent les organisations
     const res = await request(app)
       .get('/animals')
       .set('Accept', 'application/json');
@@ -388,7 +377,6 @@ describe('App functional tests', () => {
     assert.ok(res.body.animals);
     assert.ok(Array.isArray(res.body.animals));
     
-    // Trouver notre animal créé
     const animal = res.body.animals.find((a: any) => a.name === animalData.name);
     assert.ok(animal, 'Animal should be found');
     assert.ok(animal.organization, 'Animal should have organization data');
@@ -398,7 +386,6 @@ describe('App functional tests', () => {
   });
 
   it('GET /animals/:id should return animal with organization details', async () => {
-    // Créer une organisation
     const organizationData = {
       name: 'Specific Test Organization',
       email: 'specific@testorg.com',
@@ -426,7 +413,6 @@ describe('App functional tests', () => {
 
     const organizationId = orgRes.body.created.organization_id;
 
-    // Créer un animal
     const animalData = {
       organizationId: organizationId,
       type: 'Cat',
@@ -454,7 +440,6 @@ describe('App functional tests', () => {
 
     const animalId = animalRes.body.created.id;
 
-    // Récupérer l'animal spécifique avec ses détails d'organisation
     const res = await request(app)
       .get(`/animals/${animalId}`)
       .set('Accept', 'application/json');

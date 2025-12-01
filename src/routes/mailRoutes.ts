@@ -14,7 +14,6 @@ mailRouter.post("/send-mail", async (req, res) => {
   }
 });
 
-// GET /mails - Récupérer tous les mails
 mailRouter.get("/mails", async (_req, res) => {
   try {
     const mails = await Mail.findAll();
@@ -24,7 +23,6 @@ mailRouter.get("/mails", async (_req, res) => {
   }
 });
 
-// GET /mails/:id - Récupérer un mail par ID
 mailRouter.get("/mails/:id", async (req, res) => {
   try {
     const mail = await Mail.findByPk(req.params.id);

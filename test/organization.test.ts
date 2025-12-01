@@ -5,7 +5,6 @@ import { app, syncDatabase } from '../src/routes/app';
 // tests pour la table Organization
 
 describe('App functional tests', () => {
-  // Synchroniser la base de données avant tous les tests
   before(async () => {
     await syncDatabase();
   });
@@ -193,7 +192,6 @@ describe('App functional tests', () => {
     assert.equal(res.body.updated.name, updateData.name);
     assert.equal(res.body.updated.phone, updateData.phone);
     assert.equal(res.body.updated.hours, updateData.hours);
-    // Les autres champs doivent rester inchangés
     assert.equal(res.body.updated.email, organizationData.email);
     assert.equal(res.body.updated.city, organizationData.city);
   });
@@ -249,7 +247,6 @@ describe('App functional tests', () => {
     assert.ok(res.body.message);
     assert.equal(res.body.message, 'Organization deleted successfully');
 
-    // Vérifier que l'organisation a bien été supprimée
     const getRes = await request(app)
       .get(`/organizations/${organizationId}`)
       .set('Accept', 'application/json');
@@ -270,7 +267,6 @@ describe('App functional tests', () => {
   it('POST /organizations should handle missing required fields', async () => {
     const incompleteData = {
       email: 'incomplete@test.org'
-      // name is missing, which is required
     };
 
     const res = await request(app)

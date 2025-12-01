@@ -5,12 +5,10 @@ import { app, syncDatabase } from '../src/routes/app';
 // tests pour tester les animaux avec leurs organisations
 
 describe('Animals with Organizations API tests', () => {
-  // Synchroniser la base de données avant tous les tests
   before(async () => {
     await syncDatabase();
   });
 
-  // Helper function to create an organization
   async function createTestOrganization(name: string = 'Test Organization') {
     const organizationData = {
       name: name,
@@ -50,10 +48,8 @@ describe('Animals with Organizations API tests', () => {
   });
 
   it('GET /animals should return animals with their organizations', async () => {
-    // D'abord créer une organisation
     const organizationId = await createTestOrganization('Pet Haven Shelter');
 
-    // Ensuite créer un animal avec cette organisation
     const animalData = {
       organizationId: organizationId,
       type: 'Dog',
@@ -79,7 +75,6 @@ describe('Animals with Organizations API tests', () => {
       .send(animalData)
       .set('Accept', 'application/json');
 
-    // Récupérer tous les animaux et vérifier qu'ils incluent les organisations
     const res = await request(app)
       .get('/animals')
       .set('Accept', 'application/json');
@@ -90,7 +85,6 @@ describe('Animals with Organizations API tests', () => {
     assert.ok(res.body.animals);
     assert.ok(Array.isArray(res.body.animals));
     
-    // Trouver notre animal créé
     const animal = res.body.animals.find((a: any) => a.name === animalData.name);
     assert.ok(animal, 'Animal should be found');
     assert.ok(animal.organization, 'Animal should have organization data');
@@ -99,10 +93,8 @@ describe('Animals with Organizations API tests', () => {
   });
 
   it('GET /animals/:id should return animal with organization details', async () => {
-    // Créer une organisation
     const organizationId = await createTestOrganization('Cat Rescue Center');
 
-    // Créer un animal
     const animalData = {
       organizationId: organizationId,
       type: 'Cat',
@@ -130,7 +122,6 @@ describe('Animals with Organizations API tests', () => {
 
     const animalId = animalRes.body.created.id;
 
-    // Récupérer l'animal spécifique avec ses détails d'organisation
     const res = await request(app)
       .get(`/animals/${animalId}`)
       .set('Accept', 'application/json');
@@ -143,14 +134,12 @@ describe('Animals with Organizations API tests', () => {
     assert.equal(res.body.animal.organization.name, 'Cat Rescue Center');
     assert.equal(res.body.animal.organizationId, organizationId);
     
-    // Vérifier que toutes les données de l'organisation sont présentes
     assert.ok(res.body.animal.organization.email);
     assert.ok(res.body.animal.organization.phone);
     assert.ok(res.body.animal.organization.address);
   });
 
   it('POST /animals with valid organizationId should create animal', async () => {
-    // Créer une organisation
     const organizationId = await createTestOrganization('Wildlife Sanctuary');
 
     const animalData = {
@@ -188,7 +177,7 @@ describe('Animals with Organizations API tests', () => {
 
   it('POST /animals with invalid organizationId should fail', async () => {
     const animalData = {
-      organizationId: 99999, // ID inexistant
+      organizationId: 99999, 
       type: 'Dog',
       size: 'Large',
       genre: 'Male',
@@ -214,15 +203,12 @@ describe('Animals with Organizations API tests', () => {
 
     console.log('\n❌ POST /animals with invalid org response:', JSON.stringify(res.body, null, 2));
 
-    // Devrait échouer à cause de la contrainte de clé étrangère
     assert.ok(res.status >= 400, 'Should fail with invalid organization ID');
   });
 
   it('GET /animals should include all organization details', async () => {
-    // Créer une organisation avec des données complètes
     const organizationId = await createTestOrganization('Complete Test Org');
 
-    // Créer un animal
     const animalData = {
       organizationId: organizationId,
       type: 'Bird',
@@ -248,7 +234,6 @@ describe('Animals with Organizations API tests', () => {
       .send(animalData)
       .set('Accept', 'application/json');
 
-    // Récupérer l'animal et vérifier tous les champs de l'organisation
     const res = await request(app)
       .get('/animals')
       .set('Accept', 'application/json');

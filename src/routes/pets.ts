@@ -3,10 +3,7 @@ import { pfClient } from '../services/petfinderClient';
 
 const router = Router();
 
-/**
- * GET /api/pets?type=cat&location=Paris,FR&distance=100&page=1&limit=20
- * Renvoie un “proxy” propre côté backend (CORS, secret protégé).
- */
+
 router.get('/animal', async (req, res) => {
   try {
     const { id, organizationId, type, size, genre, breed, age, description, status, color, coat, name, good_with_children, good_with_dogs, good_with_cats, house_trained, declawed, special_needs} = req.query;
@@ -32,7 +29,6 @@ router.get('/animal', async (req, res) => {
         special_needs: (special_needs as string) || undefined,
     });
 
-    // Normalisation légère côté API
     res.json({
       animals: response.data.animals ?? [],
       pagination: response.data.pagination ?? {},

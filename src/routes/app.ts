@@ -17,18 +17,14 @@ console.log("MAILTRAP_PORT =", process.env.MAILTRAP_PORT);
 export const app: Application = express();
 const PORT: number = 3005;
 
-// Parse JSON bodies
 app.use(express.json());
 
 
-// Initialize SQLite + Sequelize and sync models
 const inTest = process.env.NODE_ENV === 'test';
 const { sequelize } = models;
 
-// Fonction pour synchroniser la base de données
 export const syncDatabase = async () => {
   try {
-    // En mode test, on force la recréation des tables pour éviter les conflits
     const isTest = process.env.NODE_ENV === 'test';
     await sequelize.sync({ force: isTest });
     console.log('Database synchronized');
@@ -38,7 +34,6 @@ export const syncDatabase = async () => {
   }
 };
 
-// Synchroniser immédiatement en mode non-test
 if (!inTest) {
   syncDatabase();
 }
@@ -53,7 +48,6 @@ app.post('/animals', async (req: Request, res: Response) => {
   res.status(201).json({ created });
 });
 
-// GET /animals - Récupérer tous les animaux
 app.get('/animals', async (_req: Request, res: Response) => {
   try {
     const animals = await models.Animal.findAll({
@@ -68,7 +62,6 @@ app.get('/animals', async (_req: Request, res: Response) => {
   }
 });
 
-// GET /animals/:id - Récupérer un animal spécifique
 app.get('/animals/:id', async (req: Request, res: Response) => {
   try {
     const animal = await models.Animal.findByPk(req.params.id, {
@@ -86,7 +79,6 @@ app.get('/animals/:id', async (req: Request, res: Response) => {
   }
 });
 
-// PUT /animals/:id - Mettre à jour un animal
 app.put('/animals/:id', async (req: Request, res: Response) => {
   try {
     const animal = await models.Animal.findByPk(req.params.id);
@@ -100,7 +92,6 @@ app.put('/animals/:id', async (req: Request, res: Response) => {
   }
 });
 
-// DELETE /animals/:id - Supprimer un animal
 app.delete('/animals/:id', async (req: Request, res: Response) => {
   try {
     const animal = await models.Animal.findByPk(req.params.id);
@@ -125,7 +116,6 @@ app.post('/organizations', async (req: Request, res: Response) => {
   }
 });
 
-// GET /organizations - Récupérer toutes les organisations
 app.get('/organizations', async (_req: Request, res: Response) => {
   try {
     const organizations = await models.Organization.findAll();
@@ -135,7 +125,6 @@ app.get('/organizations', async (_req: Request, res: Response) => {
   }
 });
 
-// GET /organizations/:id - Récupérer une organisation spécifique
 app.get('/organizations/:id', async (req: Request, res: Response) => {
   try {
     const organization = await models.Organization.findByPk(req.params.id);
@@ -148,7 +137,6 @@ app.get('/organizations/:id', async (req: Request, res: Response) => {
   }
 });
 
-// PUT /organizations/:id - Mettre à jour une organisation
 app.put('/organizations/:id', async (req: Request, res: Response) => {
   try {
     const organization = await models.Organization.findByPk(req.params.id);
@@ -162,7 +150,6 @@ app.put('/organizations/:id', async (req: Request, res: Response) => {
   }
 });
 
-// DELETE /organizations/:id - Supprimer une organisation
 app.delete('/organizations/:id', async (req: Request, res: Response) => {
   try {
     const organization = await models.Organization.findByPk(req.params.id);
@@ -186,7 +173,6 @@ app.post('/users', async (req: Request, res: Response) => {
   res.status(201).json({ created });
 });
 
-// Only start server when not under test
 if (!inTest) {
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
